@@ -1,0 +1,194 @@
+---
+// Header component with responsive navigation and mobile hamburger menu
+const navLinks = [
+  { href: '/', label: 'Home' },
+  { href: '/projects', label: 'Projects' },
+  { href: '/about', label: 'About' },
+];
+
+// Determine current path for active link highlighting
+const currentPath = Astro.url.pathname;
+
+function isActive(href: string): boolean {
+  if (href === '/') return currentPath === '/';
+  return currentPath.startsWith(href);
+}
+---
+
+<header class="sticky top-0 z-50 w-full border-b border-dark-300/50 bg-dark/80 backdrop-blur-md">
+  <nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8" aria-label="Main navigation">
+
+    <!-- Logo / Site Title -->
+    <a
+      href="/"
+      class="group flex items-center gap-2 font-mono text-sm font-bold text-gray-100 transition-colors duration-200 hover:text-accent sm:text-base"
+      aria-label="Portfolio Home"
+    >
+      <!-- Terminal cursor icon -->
+      <span class="inline-block h-4 w-2 animate-pulse bg-accent" aria-hidden="true"></span>
+      <span class="text-accent">&gt;</span>
+      <span class="group-hover:text-accent transition-colors duration-200">game.dev</span>
+      <span class="text-accent-light opacity-60">_</span>
+    </a>
+
+    <!-- Desktop Navigation -->
+    <ul class="hidden items-center gap-1 md:flex" role="list">
+      {navLinks.map(({ href, label }) => (
+        <li>
+          <a
+            href={href}
+            class:list={[
+              'relative px-4 py-2 font-mono text-sm transition-all duration-200 rounded',
+              isActive(href)
+                ? 'text-accent'
+                : 'text-gray-400 hover:text-gray-100',
+            ]}
+            aria-current={isActive(href) ? 'page' : undefined}
+          >
+            {/* Active indicator */}
+            {isActive(href) && (
+              <span
+                class="absolute inset-0 rounded bg-accent/10 ring-1 ring-accent/30"
+                aria-hidden="true"
+              ></span>
+            )}
+            {/* Hover glow overlay */}
+            <span
+              class="absolute inset-0 rounded opacity-0 transition-opacity duration-200 hover:opacity-100 bg-accent/5"
+              aria-hidden="true"
+            ></span>
+            <span class="relative">
+              {isActive(href) && <span class="text-accent-light mr-1" aria-hidden="true">&gt;</span>}
+              {label}
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <!-- Mobile Hamburger Button -->
+    <button
+      id="mobile-menu-btn"
+      class="relative flex h-11 w-11 items-center justify-center rounded border border-dark-300 bg-dark-100 text-gray-400 transition-all duration-200 hover:border-accent/50 hover:text-accent md:hidden"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+      aria-label="Toggle navigation menu"
+    >
+      <!-- Hamburger icon -->
+      <svg
+        id="icon-menu"
+        class="h-5 w-5 transition-all duration-200"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+        aria-hidden="true"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+      <!-- Close icon (hidden by default) -->
+      <svg
+        id="icon-close"
+        class="absolute h-5 w-5 scale-0 opacity-0 transition-all duration-200"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+        aria-hidden="true"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </nav>
+
+  <!-- Mobile Menu Dropdown -->
+  <nav
+    id="mobile-menu"
+    class="hidden border-t border-dark-300/50 bg-dark-100/95 backdrop-blur-md md:hidden"
+    aria-label="Mobile navigation"
+  >
+    <ul class="flex flex-col px-4 py-3" role="list">
+      {navLinks.map(({ href, label }) => (
+        <li>
+          <a
+            href={href}
+            class:list={[
+              'flex items-center gap-3 rounded px-3 py-3 font-mono text-sm transition-all duration-200',
+              isActive(href)
+                ? 'text-accent bg-accent/10'
+                : 'text-gray-400 hover:text-gray-100 hover:bg-dark-200',
+            ]}
+            aria-current={isActive(href) ? 'page' : undefined}
+          >
+            <span class="text-accent-light" aria-hidden="true">
+              {isActive(href) ? '>' : '//'}
+            </span>
+            {label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+</header>
+
+<script>
+  // Mobile menu setup — runs on initial load and after every View Transition navigation
+  function initMobileMenu() {
+    const btn = document.getElementById('mobile-menu-btn');
+    const menu = document.getElementById('mobile-menu');
+    const iconMenu = document.getElementById('icon-menu');
+    const iconClose = document.getElementById('icon-close');
+
+    if (!btn || !menu || !iconMenu || !iconClose) return;
+
+    // Always reset menu state on page load to prevent stale open state after navigation
+    menu.classList.add('hidden');
+    iconMenu.classList.remove('scale-0', 'opacity-0');
+    iconClose.classList.add('scale-0', 'opacity-0');
+    btn.setAttribute('aria-expanded', 'false');
+
+    // Remove previous listeners by cloning (avoids duplicate bindings across navigations)
+    const newBtn = btn.cloneNode(true) as HTMLButtonElement;
+    btn.replaceWith(newBtn);
+    const freshBtn = document.getElementById('mobile-menu-btn') as HTMLButtonElement;
+
+    freshBtn.addEventListener('click', () => {
+      const isOpen = menu.classList.contains('hidden');
+
+      // Toggle menu visibility
+      menu.classList.toggle('hidden', !isOpen);
+
+      // Toggle icons
+      iconMenu.classList.toggle('scale-0', isOpen);
+      iconMenu.classList.toggle('opacity-0', isOpen);
+      iconClose.classList.toggle('scale-0', !isOpen);
+      iconClose.classList.toggle('opacity-0', !isOpen);
+
+      // Update aria-expanded
+      freshBtn.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    // Close menu on navigation link click
+    menu.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        menu.classList.add('hidden');
+        iconMenu.classList.remove('scale-0', 'opacity-0');
+        iconClose.classList.add('scale-0', 'opacity-0');
+        freshBtn.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    // Close menu on outside click
+    document.addEventListener('click', (e) => {
+      if (!freshBtn.contains(e.target as Node) && !menu.contains(e.target as Node)) {
+        menu.classList.add('hidden');
+        iconMenu.classList.remove('scale-0', 'opacity-0');
+        iconClose.classList.add('scale-0', 'opacity-0');
+        freshBtn.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
+  // astro:page-load fires on initial load AND after each View Transition
+  document.addEventListener('astro:page-load', initMobileMenu);
+</script>

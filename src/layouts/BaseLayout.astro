@@ -1,0 +1,136 @@
+---
+// Base layout for all pages — includes Header, Footer, global meta, and grid background
+import { ViewTransitions } from 'astro:transitions';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+}
+
+const {
+  title,
+  description = '게임 개발자 포트폴리오 — Unreal Engine C++ 프로젝트 모음',
+  ogImage = '/og-default.png',
+} = Astro.props;
+
+// Build canonical URL from current request
+const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
+---
+
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={new URL(ogImage, Astro.site ?? Astro.url.origin)} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <!-- Canonical -->
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- Generator, theme color, locale, favicon -->
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#0a0a0f" />
+    <meta property="og:locale" content="ko_KR" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Fonts — preconnect first, then stylesheet -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+
+    <ViewTransitions />
+
+    <title>{title}</title>
+  </head>
+
+  <body class="relative min-h-screen bg-dark font-mono text-gray-100 antialiased">
+
+    <!-- Skip navigation link for keyboard users -->
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-game focus:bg-accent focus:px-4 focus:py-2 focus:text-sm focus:text-white focus:shadow-glow">
+      콘텐츠로 건너뛰기
+    </a>
+
+    <!-- Subtle grid pattern background overlay -->
+    <div class="grid-bg pointer-events-none fixed inset-0 z-0" aria-hidden="true"></div>
+
+    <!-- Page content wrapper — sits above grid -->
+    <div class="relative z-10 flex min-h-screen flex-col">
+      <!-- transition:persist prevents header flicker between page navigations -->
+      <div transition:persist="site-header">
+        <Header />
+      </div>
+
+      <main id="main-content" class="flex-1">
+        <slot />
+      </main>
+
+      <Footer />
+    </div>
+
+  </body>
+</html>
+
+<style>
+  /* Subtle grid pattern background — game developer aesthetic */
+  .grid-bg {
+    background-image:
+      linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
+    background-size: 48px 48px;
+    background-position: center center;
+  }
+
+  /* Radial vignette to fade grid at edges */
+  .grid-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      ellipse 80% 60% at 50% 0%,
+      transparent 30%,
+      #0a0a0f 100%
+    );
+  }
+
+  /* Page transition — dark theme fade */
+  ::view-transition-old(root) {
+    animation: vt-fade-out 0.2s ease-out;
+  }
+
+  ::view-transition-new(root) {
+    animation: vt-fade-in 0.3s ease-in;
+  }
+
+  @keyframes vt-fade-out {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+  }
+
+  @keyframes vt-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  /* Respect user's motion preference — instant transition */
+  @media (prefers-reduced-motion: reduce) {
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation: none;
+    }
+  }
+</style>

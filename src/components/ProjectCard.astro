@@ -1,0 +1,89 @@
+---
+// ProjectCard — individual project card for grid display
+// Shows thumbnail placeholder, title, description, tags, and date
+
+interface Props {
+  title: string;
+  description: string;
+  tags: string[];
+  slug: string;
+  date: Date;
+}
+
+const { title, description, tags, slug, date } = Astro.props;
+
+// Format date to YYYY/MM — locale-independent
+const y = date.getFullYear();
+const m = String(date.getMonth() + 1).padStart(2, '0');
+const formattedDate = `${y}/${m}`;
+---
+
+<article class="project-card group relative">
+  <a
+    href={`/projects/${slug}`}
+    class="flex h-full flex-col overflow-hidden rounded-game border border-dark-300 bg-dark-100 transition-all duration-300 hover:-translate-y-1 hover:border-accent/50 hover:shadow-glow-sm"
+    aria-label={`${title} 프로젝트 상세 보기`}
+  >
+    <!-- Thumbnail placeholder — decorative code pattern -->
+    <div
+      class="relative flex h-44 items-center justify-center overflow-hidden bg-gradient-to-br from-dark-200 to-dark-300 sm:h-48"
+      aria-hidden="true"
+    >
+      <!-- Grid dot pattern overlay -->
+      <div
+        class="absolute inset-0 opacity-20"
+        style="background-image: radial-gradient(circle, rgba(99,102,241,0.4) 1px, transparent 1px); background-size: 24px 24px;"
+      ></div>
+
+      <!-- Accent glow in center -->
+      <div
+        class="absolute h-32 w-32 rounded-full bg-accent/10 blur-2xl transition-all duration-300 group-hover:bg-accent/20 group-hover:blur-xl"
+      ></div>
+
+      <!-- Code decoration text -->
+      <div class="relative select-none text-center font-mono">
+        <p class="text-2xl font-bold text-accent/30 transition-colors duration-300 group-hover:text-accent/50">
+          //
+        </p>
+        <p class="mt-1 text-xs tracking-widest text-gray-600 uppercase transition-colors duration-300 group-hover:text-gray-500">
+          project
+        </p>
+      </div>
+    </div>
+
+    <!-- Card body -->
+    <div class="flex flex-1 flex-col gap-3 p-5">
+      <!-- Title -->
+      <h3 class="font-mono text-base font-bold leading-snug text-gray-100 transition-colors duration-300 group-hover:text-accent-light sm:text-lg">
+        {title}
+      </h3>
+
+      <!-- Description — 2-line clamp -->
+      <p class="line-clamp-2 flex-1 font-mono text-sm leading-relaxed text-gray-400">
+        {description}
+      </p>
+
+      <!-- Footer: tags + date -->
+      <div class="mt-auto flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-dark-300">
+        <!-- Tag badges -->
+        <ul class="flex flex-wrap gap-1.5" aria-label="태그">
+          {tags.map((tag) => (
+            <li>
+              <span class="inline-block rounded-game border border-accent/20 bg-accent/10 px-2 py-0.5 font-mono text-xs text-accent/80 transition-colors duration-300 group-hover:border-accent/40 group-hover:text-accent-light">
+                {tag}
+              </span>
+            </li>
+          ))}
+        </ul>
+
+        <!-- Date -->
+        <time
+          datetime={date.toISOString().slice(0, 10)}
+          class="shrink-0 font-mono text-xs text-gray-600"
+        >
+          {formattedDate}
+        </time>
+      </div>
+    </div>
+  </a>
+</article>

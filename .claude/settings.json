@@ -1,0 +1,44 @@
+{
+  "permissions": {
+    "deny": [
+      "Bash(sudo:*)",
+      "Bash(rm -rf:*)",
+      "Bash(rm -fr:*)",
+      "Read(.env)",
+      "Read(.env.*)",
+      "Read(**/*.pem)",
+      "Read(**/*.key)",
+      "Write(.env)",
+      "Write(.env.*)",
+      "Edit(.env)",
+      "Edit(.env.*)"
+    ],
+    "ask": [
+      "Bash(npm install:*)",
+      "Bash(npm exec:*)",
+      "Bash(npx:*)",
+      "Bash(pnpm install:*)",
+      "Bash(rm -r:*)",
+      "Write(**/astro.config.*)",
+      "Edit(**/astro.config.*)",
+      "Write(**/package.json)",
+      "Edit(**/package.json)",
+      "Write(**/.github/**)",
+      "Edit(**/.github/**)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ./hooks/pre-tool-web-check.sh",
+            "timeout": 10000
+          }
+        ]
+      }
+    ]
+  }
+}

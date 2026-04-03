@@ -1,0 +1,267 @@
+---
+// TechStack — displays engine, language, tool, and specialization categories
+// Uses inline SVG icons (geometric/abstract — copyright safe)
+
+interface TechItem {
+  name: string;
+  iconPath: string; // SVG path data
+  viewBox?: string;
+}
+
+interface TechCategory {
+  id: string;
+  label: string;
+  items: TechItem[];
+}
+
+const categories: TechCategory[] = [
+  {
+    id: 'engine',
+    label: 'Engine',
+    items: [
+      {
+        name: 'Unreal Engine 5',
+        // Gear icon
+        iconPath:
+          'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm7.94-3c0-.32-.03-.63-.07-.94l2.03-1.58a.5.5 0 0 0 .12-.63l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a6.97 6.97 0 0 0-1.62-.94l-.36-2.54A.49.49 0 0 0 14.63 3h-3.84a.49.49 0 0 0-.49.42l-.36 2.54a6.97 6.97 0 0 0-1.62.94l-2.39-.96a.49.49 0 0 0-.6.22L3.41 9.48a.49.49 0 0 0 .12.63l2.03 1.58A7.2 7.2 0 0 0 5.5 12c0 .32.03.63.07.94L3.54 14.52a.5.5 0 0 0-.12.63l1.92 3.32c.12.22.37.3.6.22l2.39-.96c.5.36 1.04.67 1.62.94l.36 2.54c.05.27.29.46.57.46h3.84c.28 0 .52-.19.57-.46l.36-2.54a6.97 6.97 0 0 0 1.62-.94l2.39.96c.23.08.48 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.63l-2.03-1.58c.04-.31.07-.62.07-.94z',
+        viewBox: '0 0 24 24',
+      },
+      {
+        name: 'Unity',
+        // Diamond / rhombus icon
+        iconPath: 'M12 2L2 12l10 10 10-10L12 2zm0 3.5L18.5 12 12 18.5 5.5 12 12 5.5z',
+        viewBox: '0 0 24 24',
+      },
+    ],
+  },
+  {
+    id: 'language',
+    label: 'Language',
+    items: [
+      {
+        name: 'C++',
+        // Code bracket icon
+        iconPath:
+          'M8 7l-5 5 5 5M16 7l5 5-5 5M13 4l-2 16',
+        viewBox: '0 0 24 24',
+      },
+      {
+        name: 'C#',
+        // Hash / sharp icon
+        iconPath:
+          'M9 5v14M15 5v14M5 9h14M5 15h14',
+        viewBox: '0 0 24 24',
+      },
+      {
+        name: 'Blueprint',
+        // Node graph icon
+        iconPath:
+          'M4 12a2 2 0 1 0 4 0 2 2 0 0 0-4 0zm12-6a2 2 0 1 0 4 0 2 2 0 0 0-4 0zm0 12a2 2 0 1 0 4 0 2 2 0 0 0-4 0zM8 12h8M16 6l-6 4.5M16 18l-6-4.5',
+        viewBox: '0 0 24 24',
+      },
+      {
+        name: 'HLSL',
+        // Triangle / shader icon
+        iconPath:
+          'M12 3L2 20h20L12 3zm0 5l6 9H6l6-9z',
+        viewBox: '0 0 24 24',
+      },
+    ],
+  },
+  {
+    id: 'tools',
+    label: 'Tools',
+    items: [
+      {
+        name: 'Visual Studio',
+        // Window / grid icon
+        iconPath:
+          'M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z',
+        viewBox: '0 0 24 24',
+      },
+      {
+        name: 'Git',
+        // Branch icon
+        iconPath:
+          'M6 3a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm0 16a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm12-12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zM6 7v10M6 7c3 0 6 1 8 3s2 5 2 7',
+        viewBox: '0 0 24 24',
+      },
+      {
+        name: 'Perforce',
+        // Layers / stack icon
+        iconPath:
+          'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5',
+        viewBox: '0 0 24 24',
+      },
+      {
+        name: 'Rider',
+        // Wrench icon
+        iconPath:
+          'M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z',
+        viewBox: '0 0 24 24',
+      },
+    ],
+  },
+  {
+    id: 'specialization',
+    label: 'Specialization',
+    items: [
+      {
+        name: 'Gameplay',
+        // Gamepad / controller icon
+        iconPath:
+          'M6 7h12a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2zm2 4H6m2 0v2m-2-1h4m5-1v2m2-1h-4',
+        viewBox: '0 0 24 24',
+      },
+      {
+        name: 'AI',
+        // Circuit / brain icon
+        iconPath:
+          'M12 2a4 4 0 0 1 4 4v1h1a3 3 0 0 1 0 6h-1v1a4 4 0 0 1-8 0v-1H7a3 3 0 0 1 0-6h1V6a4 4 0 0 1 4-4zm-2 8H8m2 0v4m4-4h2m-2 0v4M10 10h4',
+        viewBox: '0 0 24 24',
+      },
+      {
+        name: 'Shader',
+        // Sparkle / star icon
+        iconPath:
+          'M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83',
+        viewBox: '0 0 24 24',
+      },
+      {
+        name: 'Tools Dev',
+        // Terminal icon
+        iconPath:
+          'M4 17V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zM8 10l3 3-3 3m5 0h3',
+        viewBox: '0 0 24 24',
+      },
+    ],
+  },
+];
+---
+
+<section
+  id="tech-stack-section"
+  aria-label="기술 스택"
+  class="relative px-4 py-20 sm:px-6 lg:px-8"
+>
+  <!-- Section top accent line -->
+  <div
+    class="absolute left-1/2 top-0 h-px w-24 -translate-x-1/2 bg-gradient-to-r from-transparent via-accent/50 to-transparent"
+    aria-hidden="true"
+  ></div>
+
+  <div class="mx-auto max-w-6xl">
+
+    <!-- Section header -->
+    <header class="mb-12 flex flex-col items-start gap-3 sm:mb-16">
+      <!-- Terminal-style label -->
+      <p
+        class="animate-on-scroll font-mono text-xs tracking-[0.3em] text-accent/60 uppercase"
+        aria-hidden="true"
+      >
+        // tech_stack
+      </p>
+
+      <!-- Headline -->
+      <div class="animate-on-scroll" style="transition-delay: 0.1s;">
+        <h2 class="font-mono text-2xl font-bold text-gray-100 sm:text-3xl lg:text-4xl">
+          기술 스택
+        </h2>
+        <p class="mt-2 font-mono text-sm text-gray-500">
+          게임 개발에 사용하는 핵심 기술들입니다.
+        </p>
+      </div>
+    </header>
+
+    <!-- Category grid: 2-col mobile → 4-col lg -->
+    <div class="grid grid-cols-2 gap-6 lg:grid-cols-4">
+      {categories.map((category, catIndex) => (
+        <div
+          class="animate-on-scroll flex flex-col gap-3"
+          style={`transition-delay: ${0.15 + catIndex * 0.08}s;`}
+        >
+          <!-- Category label -->
+          <h3 class="font-mono text-xs font-semibold tracking-wider text-accent uppercase">
+            {category.label}
+          </h3>
+
+          <!-- Tech item list -->
+          <ul class="flex flex-col gap-2" aria-label={`${category.label} 기술 목록`}>
+            {category.items.map((item) => (
+              <li>
+                <div
+                  class="
+                    group flex items-center gap-3
+                    rounded-game border border-dark-300 bg-dark-200
+                    px-3 py-2.5
+                    transition-all duration-300
+                    hover:border-accent/40 hover:shadow-glow-sm hover:scale-[1.02]
+                  "
+                >
+                  <!-- Inline SVG icon -->
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox={item.viewBox ?? '0 0 24 24'}
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="h-4 w-4 shrink-0 text-accent/60 transition-colors duration-300 group-hover:text-accent"
+                    aria-hidden="true"
+                  >
+                    <path d={item.iconPath} />
+                  </svg>
+
+                  <!-- Tech name -->
+                  <span class="font-mono text-xs text-gray-300 leading-tight">
+                    {item.name}
+                  </span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+
+  </div>
+</section>
+
+<script>
+  // Intersection Observer — re-initialised on every page load (including View Transitions)
+  function initTechStackScroll() {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const section = document.getElementById('tech-stack-section');
+
+    if (!section) return;
+
+    // Reset so items animate in when navigating back to this page
+    section.querySelectorAll<HTMLElement>('.animate-on-scroll').forEach((el) => {
+      el.classList.remove('is-visible');
+    });
+
+    if (!prefersReducedMotion) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              (entry.target as HTMLElement).classList.add('is-visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+      );
+      section.querySelectorAll('.animate-on-scroll').forEach((el) => {
+        observer.observe(el);
+      });
+    } else {
+      section.querySelectorAll<HTMLElement>('.animate-on-scroll').forEach((el) => {
+        el.classList.add('is-visible');
+      });
+    }
+  }
+
+  document.addEventListener('astro:page-load', initTechStackScroll);
+</script>

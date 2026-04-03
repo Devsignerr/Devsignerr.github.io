@@ -1,0 +1,277 @@
+---
+// Dynamic route — individual project detail page
+// Uses Astro v5 Content Layer API with render() for Markdown content
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((project) => ({
+    // Strip .md suffix that glob loader includes in id
+    params: { slug: project.id.replace(/\.md$/, '') },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+const { title, description, tags, date } = project.data;
+
+// Format date to YYYY/MM — locale-independent
+const formattedDate = `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}`;
+---
+
+<BaseLayout title={`${title} — Game Dev Portfolio`} description={description}>
+  <article class="px-4 pb-24 pt-20 sm:px-6 lg:px-8 lg:pt-28">
+    <div class="mx-auto max-w-4xl">
+
+      <!-- Back link -->
+      <nav aria-label="뒤로가기">
+        <a
+          href="/projects"
+          class="group mb-10 inline-flex items-center gap-2 font-mono text-sm text-accent/70 transition-all duration-200 hover:text-accent hover:text-glow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        >
+          <svg
+            class="h-4 w-4 transition-transform duration-200 group-hover:-translate-x-1"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+          프로젝트 목록
+        </a>
+      </nav>
+
+      <!-- Project header -->
+      <header class="project-header mb-10">
+        <!-- Tag badges -->
+        <ul class="mb-4 flex flex-wrap gap-2" aria-label="태그">
+          {tags.map((tag) => (
+            <li>
+              <span class="inline-block rounded-game border border-accent/30 bg-accent/10 px-3 py-1 font-mono text-xs text-accent/80">
+                {tag}
+              </span>
+            </li>
+          ))}
+        </ul>
+
+        <!-- Project title -->
+        <h1 class="mb-4 font-mono text-3xl font-bold leading-tight text-gray-100 text-glow sm:text-4xl lg:text-5xl">
+          {title}
+        </h1>
+
+        <!-- Description -->
+        <p class="mb-3 max-w-2xl font-mono text-base leading-relaxed text-gray-400 sm:text-lg">
+          {description}
+        </p>
+
+        <!-- Date -->
+        <time
+          datetime={date.toISOString().slice(0, 10)}
+          class="font-mono text-sm text-gray-600"
+        >
+          {formattedDate}
+        </time>
+      </header>
+
+      <!-- Media area — placeholder for screenshots / video -->
+      <section aria-label="미디어 영역" class="mb-12">
+        <div
+          class="relative flex aspect-video w-full items-center justify-center overflow-hidden rounded-game border border-dark-300 bg-dark-200"
+          aria-label="미디어 placeholder — 스크린샷 또는 영상 예정"
+        >
+          <!-- Dot grid pattern overlay -->
+          <div
+            class="absolute inset-0 opacity-20"
+            style="background-image: radial-gradient(circle, rgba(99,102,241,0.4) 1px, transparent 1px); background-size: 32px 32px;"
+            aria-hidden="true"
+          ></div>
+
+          <!-- Ambient glow -->
+          <div
+            class="absolute h-48 w-48 rounded-full bg-accent/10 blur-3xl"
+            aria-hidden="true"
+          ></div>
+
+          <!-- Placeholder label -->
+          <div class="relative select-none text-center font-mono" aria-hidden="true">
+            <p class="text-4xl font-bold text-accent/20 sm:text-5xl">{"// "}</p>
+            <p class="mt-2 text-sm tracking-[0.2em] text-accent/50 uppercase">media</p>
+            <p class="mt-1 text-xs text-gray-700">screenshot / video</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Markdown content -->
+      <section class="prose-content max-w-3xl" aria-label="프로젝트 설명">
+        <Content />
+      </section>
+
+      <!-- Bottom navigation -->
+      <footer class="mt-16 border-t border-accent/20 pt-8">
+        <a
+          href="/projects"
+          class="group inline-flex items-center gap-2 rounded-game border border-accent/40 bg-transparent px-6 py-3 font-mono text-sm font-medium text-gray-300 transition-all duration-300 hover:border-accent hover:bg-accent/10 hover:text-accent-light hover:shadow-glow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        >
+          <svg
+            class="h-4 w-4 transition-transform duration-200 group-hover:-translate-x-1"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+          프로젝트 목록으로 돌아가기
+        </a>
+      </footer>
+
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  /*
+   * Prose styles for Markdown content — dark theme
+   * @tailwindcss/typography plugin is intentionally not used.
+   * prefers-reduced-motion: no animations on this page.
+   */
+
+  .prose-content :global(h2) {
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    padding-left: 0.75rem;
+    border-left: 2px solid rgba(99, 102, 241, 0.7);
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.4;
+    color: #e2e8f0;
+  }
+
+  .prose-content :global(h3) {
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: #cbd5e1;
+  }
+
+  .prose-content :global(p) {
+    margin-bottom: 1rem;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.9rem;
+    line-height: 1.8;
+    color: #94a3b8;
+  }
+
+  .prose-content :global(ul) {
+    margin-bottom: 1rem;
+    padding-left: 0;
+    list-style: none;
+  }
+
+  .prose-content :global(ul li) {
+    position: relative;
+    padding-left: 1.25rem;
+    margin-bottom: 0.4rem;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: #94a3b8;
+  }
+
+  .prose-content :global(ul li)::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: rgba(99, 102, 241, 0.7);
+    font-size: 0.75rem;
+    top: 0.2rem;
+  }
+
+  .prose-content :global(ol) {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+    list-style: decimal;
+  }
+
+  .prose-content :global(ol li) {
+    margin-bottom: 0.4rem;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: #94a3b8;
+  }
+
+  .prose-content :global(code) {
+    padding: 0.15em 0.4em;
+    background-color: #1e1e28;
+    border: 1px solid #2a2a38;
+    border-radius: 2px;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.85em;
+    color: #818cf8;
+  }
+
+  .prose-content :global(pre) {
+    margin-bottom: 1.25rem;
+    padding: 1rem 1.25rem;
+    background-color: #16161d;
+    border: 1px solid #2a2a38;
+    border-radius: 2px;
+    overflow-x: auto;
+  }
+
+  .prose-content :global(pre code) {
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    font-size: 0.85rem;
+    color: #94a3b8;
+  }
+
+  .prose-content :global(strong) {
+    font-weight: 700;
+    color: #e2e8f0;
+  }
+
+  .prose-content :global(em) {
+    font-style: italic;
+    color: #94a3b8;
+  }
+
+  .prose-content :global(a) {
+    color: #818cf8;
+    text-decoration: underline;
+    text-decoration-color: rgba(129, 140, 248, 0.4);
+    transition: color 0.2s, text-decoration-color 0.2s;
+  }
+
+  .prose-content :global(a:hover) {
+    color: #a5b4fc;
+    text-decoration-color: rgba(165, 180, 252, 0.6);
+  }
+
+  .prose-content :global(hr) {
+    margin: 2rem 0;
+    border-color: rgba(99, 102, 241, 0.2);
+  }
+
+  .prose-content :global(blockquote) {
+    margin: 1.25rem 0;
+    padding: 0.5rem 1rem;
+    border-left: 2px solid rgba(99, 102, 241, 0.4);
+    background-color: rgba(99, 102, 241, 0.05);
+    color: #64748b;
+    font-style: italic;
+  }
+</style>

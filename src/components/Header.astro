@@ -189,6 +189,48 @@ function isActive(href: string): boolean {
     });
   }
 
+  // Update active navigation highlight based on current URL
+  function updateActiveNav() {
+    const currentPath = window.location.pathname;
+    // Desktop + mobile nav links
+    document.querySelectorAll<HTMLAnchorElement>('header a[href]').forEach((link) => {
+      const href = link.getAttribute('href');
+      if (!href || href === '/') {
+        // Home link — active only on exact match
+        const isActive = currentPath === '/' || currentPath === '/index.html';
+        link.setAttribute('aria-current', isActive ? 'page' : '');
+        if (!isActive) link.removeAttribute('aria-current');
+      } else if (currentPath.startsWith(href)) {
+        link.setAttribute('aria-current', 'page');
+      } else {
+        link.removeAttribute('aria-current');
+      }
+    });
+
+    // Update desktop nav styling
+    document.querySelectorAll<HTMLAnchorElement>('header nav ul.hidden a, header nav ul.md\\:flex a').forEach((link) => {
+      const isActive = link.getAttribute('aria-current') === 'page';
+      // Toggle text color
+      link.classList.toggle('text-accent', isActive);
+      link.classList.toggle('text-gray-400', !isActive);
+      // Toggle active indicator
+      const indicator = link.querySelector('span.bg-accent\\/10');
+      if (indicator) indicator.remove();
+      if (isActive) {
+        const span = document.createElement('span');
+        span.className = 'absolute inset-0 rounded bg-accent/10 ring-1 ring-accent/30';
+        span.setAttribute('aria-hidden', 'true');
+        link.prepend(span);
+      }
+      // Toggle > prefix
+      const prefixSpan = link.querySelector('span.text-accent-light.mr-1');
+      if (!isActive && prefixSpan) prefixSpan.remove();
+    });
+  }
+
   // astro:page-load fires on initial load AND after each View Transition
-  document.addEventListener('astro:page-load', initMobileMenu);
+  document.addEventListener('astro:page-load', () => {
+    initMobileMenu();
+    updateActiveNav();
+  });
 </script>

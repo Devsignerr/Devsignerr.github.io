@@ -236,11 +236,6 @@ const categories: TechCategory[] = [
 
     if (!section) return;
 
-    // Reset so items animate in when navigating back to this page
-    section.querySelectorAll<HTMLElement>('.animate-on-scroll').forEach((el) => {
-      el.classList.remove('is-visible');
-    });
-
     if (!prefersReducedMotion) {
       const observer = new IntersectionObserver(
         (entries) => {

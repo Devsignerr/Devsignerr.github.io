@@ -70,10 +70,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin)
 
     <!-- Page content wrapper — sits above grid -->
     <div class="relative z-10 flex min-h-screen flex-col">
-      <!-- transition:persist prevents header flicker between page navigations -->
-      <div transition:persist="site-header">
-        <Header />
-      </div>
+      <Header />
 
       <main id="main-content" class="flex-1">
         <slot />
@@ -107,18 +104,14 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin)
     );
   }
 
-  /* Page transition — dark theme fade */
+  /* Page transition — quick crossfade, no flicker */
   ::view-transition-old(root) {
-    animation: vt-fade-out 0.2s ease-out;
+    animation: none;
+    opacity: 0;
   }
 
   ::view-transition-new(root) {
-    animation: vt-fade-in 0.3s ease-in;
-  }
-
-  @keyframes vt-fade-out {
-    from { opacity: 1; }
-    to   { opacity: 0; }
+    animation: vt-fade-in 0.15s ease-out;
   }
 
   @keyframes vt-fade-in {
@@ -126,9 +119,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin)
     to   { opacity: 1; }
   }
 
-  /* Respect user's motion preference — instant transition */
   @media (prefers-reduced-motion: reduce) {
-    ::view-transition-old(root),
     ::view-transition-new(root) {
       animation: none;
     }

@@ -382,9 +382,6 @@ const careers: Career[] = [
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const animatableElements = document.querySelectorAll<HTMLElement>('.animate-on-scroll');
 
-    // Reset state so elements animate in again when navigating back
-    animatableElements.forEach((el) => el.classList.remove('is-visible'));
-
     if (!prefersReducedMotion) {
       const observer = new IntersectionObserver(
         (entries) => {

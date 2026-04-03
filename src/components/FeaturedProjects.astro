@@ -106,11 +106,6 @@ const featuredProjects = allProjects
 
     if (!section) return;
 
-    // Reset visibility so elements animate again when navigating back to this page
-    section.querySelectorAll<HTMLElement>('.animate-on-scroll').forEach((el) => {
-      el.classList.remove('is-visible');
-    });
-
     if (!prefersReducedMotion) {
       const observer = new IntersectionObserver(
         (entries) => {
